@@ -10,11 +10,13 @@ import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api'
 import { InMemoryDataService }  from './in-memory-data.service';
 
 import {AppComponent} from "./app.component";
-import {HeroDetailComponent} from './hero-detail.component';
-import {HeroesComponent} from "./heroes.component";
 import {HeroService} from "./hero.service";
-import {DashboardComponent} from "./dashboard.component";
 import {MessageService} from "./message.service";
+import {MessagesComponent} from "./messages/messages.component";
+import {HeroDetailComponent} from "./detail/hero-detail.component";
+import {HeroesComponent} from "./heroes/heroes.component";
+import {DashboardComponent} from "./dashboard/dashboard.component";
+import {HeroSearchComponent} from "./hero-search/hero-search.component";
 
 
 @NgModule({
@@ -29,7 +31,9 @@ import {MessageService} from "./message.service";
     AppComponent,
     HeroDetailComponent,
     HeroesComponent,
-    DashboardComponent
+    DashboardComponent,
+    MessagesComponent,
+    HeroSearchComponent
   ],
   providers: [
     HeroService,

@@ -26,22 +26,20 @@ export class HeroService {
   //获取列表
   getHeroes(): Observable<Hero[]> {
     //lambda表达式 如果“语句或语句块”有返回值时，如果只有一条语句则可以不输写“return”语句，编译器会自动处理，否则必须加上
-    return this.httpClient.get<{ data: Hero[] }>(this.heroesUrl).pipe(
-      tap(heroes => this.log(`fetched heroes`)),
-      map(heroes => heroes.data),
+    return this.httpClient.get<Hero[]>(this.heroesUrl).pipe(
+      tap(heroes => {this.log(`fetched heroes`);}),
       catchError(this.handleError('getHeroes', []))
     );
   }
 
   //根据id获取某个hero
   getHero(id: number): Observable<Hero> {
-    //subscribe 不会理解返回
+    //subscribe 不会直接返回
     // var hero: Hero;
     // this.getHeroes().subscribe(heroes =>  heroes.find(hero => hero.id == id));
     const url = `${this.heroesUrl}/${id}`;
-    return this.httpClient.get<{data:Hero}>(url).pipe(
+    return this.httpClient.get<Hero>(url).pipe(
       tap(_ => this.log(`fetched hero id=${id}`)),
-      map(heroe => heroe.data),
       catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
   }
@@ -52,7 +50,34 @@ export class HeroService {
       catchError(this.handleError<any>('updateHero'))
     );
   }
+  /** POST: add a new hero to the server */
+  addHero (hero: Hero): Observable<Hero> {
+    return this.httpClient.post<Hero>(this.heroesUrl, hero, httpOptions).pipe(
+      tap((hero: Hero) => this.log(`added hero w/ id=${hero.id}`)),
+      catchError(this.handleError<Hero>('addHero'))
+    );
+  }
+  /** DELETE: delete the hero from the server */
+  deleteHero (hero: Hero | number): Observable<Hero> {
+    const id = typeof hero === 'number' ? hero : hero.id;
+    const url = `${this.heroesUrl}/${id}`;
 
+    return this.httpClient.delete<Hero>(url, httpOptions).pipe(
+      tap(_ => this.log(`deleted hero id=${id}`)),
+      catchError(this.handleError<Hero>('deleteHero'))
+    );
+  }
+  /* GET heroes whose name contains search term */
+  searchHeroes(term: string): Observable<Hero[]> {
+    if (!term.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+    return this.httpClient.get<Hero[]>(`api/heroes/?name=${term}`).pipe(
+      tap(_ => this.log(`found heroes matching "${term}"`)),
+      catchError(this.handleError<Hero[]>('searchHeroes', []))
+    );
+  }
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
